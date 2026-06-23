@@ -27,7 +27,12 @@
     background: #f0f4f8;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     color: var(--ink);
-    padding: 24px 30px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
     overflow: auto;
   }
 
@@ -45,17 +50,17 @@
     display: flex;
     align-items: center;
     position: relative;
-    padding: 4px 0;
+    padding: 10px 0;
   }
 
   .node {
-    height: 36px;
-    line-height: 36px;
-    padding: 0 14px;
+    height: 42px;
+    line-height: 42px;
+    padding: 0 16px;
     background: #fff;
     border: 1.5px solid var(--node-border);
     border-radius: 7px;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
     white-space: nowrap;
     flex-shrink: 0;
@@ -68,7 +73,7 @@
     box-shadow: 0 3px 10px rgba(142,29,58,.15);
   }
 
-  .l1 { font-size: 14px; font-weight: 700; min-width: 350px; }
+  .l1 { font-size: 15px; font-weight: 700; min-width: 350px; }
 
   .root-node {
     background: var(--root-bg);
@@ -81,7 +86,7 @@
     letter-spacing: 4px;
     height: auto;
     line-height: 1;
-    padding: 24px 12px;
+    padding: 28px 14px;
     border-radius: 8px;
   }
   .root-node:hover {
@@ -91,7 +96,7 @@
 
   /* ===== BRIDGE (parent-to-backbone connector) ===== */
   .bridge {
-    width: 28px;
+    width: 34px;
     align-self: stretch;
     position: relative;
     flex-shrink: 0;
@@ -110,15 +115,15 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-left: 28px;
+    padding-left: 34px;
   }
 
   /* Horizontal connector: backbone -> child node */
   .children > .branch::before {
     content: '';
     position: absolute;
-    left: -28px;
-    width: 28px;
+    left: -34px;
+    width: 34px;
     top: 50%;
     border-top: 1.5px dashed var(--line);
   }
@@ -127,7 +132,7 @@
   .children > .branch::after {
     content: '';
     position: absolute;
-    left: -28px;
+    left: -34px;
     top: 0;
     bottom: 0;
     border-left: 1.5px dashed var(--line);
