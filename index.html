@@ -31,36 +31,36 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 30px;
+    padding: 2vh 2vw;
     overflow: auto;
   }
 
   h1 {
-    font-size: 17px;
+    font-size: clamp(15px, 1.8vh, 22px);
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 1.5vh;
+    flex-shrink: 0;
   }
   h1 span { color: var(--root-bg); }
 
   /* ===== TREE LAYOUT ===== */
-  .tree { display: inline-flex; }
+  .tree { display: inline-flex; margin: auto 0; }
 
   .branch {
     display: flex;
     align-items: center;
     position: relative;
-    padding: 10px 0;
+    padding: max(6px, 1vh) 0;
   }
 
   .node {
-    height: 42px;
-    line-height: 42px;
-    padding: 0 16px;
+    height: max(36px, 4.5vh);
+    line-height: max(36px, 4.5vh);
+    padding: 0 max(12px, 1vw);
     background: #fff;
     border: 1.5px solid var(--node-border);
     border-radius: 7px;
-    font-size: 13.5px;
+    font-size: clamp(12px, 1.4vh, 16px);
     font-weight: 600;
     white-space: nowrap;
     flex-shrink: 0;
@@ -73,7 +73,7 @@
     box-shadow: 0 3px 10px rgba(142,29,58,.15);
   }
 
-  .l1 { font-size: 15px; font-weight: 700; min-width: 350px; }
+  .l1 { font-size: clamp(14px, 1.6vh, 18px); font-weight: 700; min-width: 350px; }
 
   .root-node {
     background: var(--root-bg);
@@ -81,12 +81,12 @@
     border-color: var(--root-bg);
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: 20px;
+    font-size: clamp(18px, 2.2vh, 26px);
     font-weight: 800;
     letter-spacing: 4px;
     height: auto;
     line-height: 1;
-    padding: 28px 14px;
+    padding: max(20px, 3vh) max(10px, 1vw);
     border-radius: 8px;
   }
   .root-node:hover {
@@ -214,9 +214,9 @@
   .v97457  { animation-name: c97457; }
 
   /* ===== DEPTH-BASED FONT SIZING & ALIGNMENT ===== */
-  .children .children .node { font-size: 12.5px; }
-  .children .children .children .node { font-size: 12px; }
-  .children .children .children .children .node { font-size: 11.5px; }
+  .children .children .node { font-size: clamp(11.5px, 1.3vh, 15px); }
+  .children .children .children .node { font-size: clamp(11px, 1.2vh, 14px); }
+  .children .children .children .children .node { font-size: clamp(10.5px, 1.15vh, 13.5px); }
 
   /* Level alignment: same-depth nodes get equal width so columns line up */
   .children .children > .branch > .node { min-width: 200px; }
