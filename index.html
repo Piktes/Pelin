@@ -35,13 +35,41 @@
     overflow: auto;
   }
 
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+    flex-shrink: 0;
+    margin-bottom: 1.5vh;
+  }
+
   h1 {
     font-size: clamp(15px, 1.8vh, 22px);
     font-weight: 600;
-    margin-bottom: 1.5vh;
-    flex-shrink: 0;
   }
   h1 span { color: var(--root-bg); }
+
+  /* ===== MASTER TOGGLE ===== */
+  .master-toggle { display: none; }
+
+  .master-btn {
+    cursor: pointer;
+    padding: max(5px, 0.7vh) max(14px, 1.1vw);
+    background: var(--root-bg);
+    color: #fff;
+    border-radius: 6px;
+    font-size: clamp(11px, 1.2vh, 15px);
+    font-weight: 600;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .master-btn:hover { opacity: 0.85; }
+
+  .t-close { display: none; }
+  .master-toggle:checked ~ .top-bar .t-open { display: none; }
+  .master-toggle:checked ~ .top-bar .t-close { display: inline; }
 
   /* ===== TREE LAYOUT ===== */
   .tree { display: inline-flex; margin: auto 0; }
@@ -67,6 +95,8 @@
     position: relative;
     box-shadow: 0 1px 3px rgba(31,42,68,.08);
     transition: border-color .2s, box-shadow .2s;
+    display: inline-flex;
+    align-items: center;
   }
   .node:hover {
     border-color: var(--root-bg);
@@ -88,13 +118,14 @@
     line-height: 1;
     padding: max(20px, 3vh) max(10px, 1vw);
     border-radius: 8px;
+    display: flex;
   }
   .root-node:hover {
     border-color: var(--root-bg);
     box-shadow: 0 4px 14px rgba(142,29,58,.25);
   }
 
-  /* ===== BRIDGE (parent-to-backbone connector) ===== */
+  /* ===== BRIDGE ===== */
   .bridge {
     width: 34px;
     align-self: stretch;
@@ -118,7 +149,6 @@
     padding-left: 34px;
   }
 
-  /* Horizontal connector: backbone -> child node */
   .children > .branch::before {
     content: '';
     position: absolute;
@@ -128,7 +158,6 @@
     border-top: 1.5px dashed var(--line);
   }
 
-  /* Vertical backbone segments */
   .children > .branch::after {
     content: '';
     position: absolute;
@@ -141,7 +170,6 @@
   .children > .branch:last-child::after { bottom: 50%; }
   .children > .branch:only-child::after { display: none; }
 
-  /* Arrow tips at connector endpoints */
   .children > .branch > .node::before {
     content: '';
     position: absolute;
@@ -150,6 +178,50 @@
     transform: translateY(-50%);
     border: 5px solid transparent;
     border-left: 6px solid var(--line);
+  }
+
+  /* ===== TOGGLE (checkbox hack) ===== */
+  .toggle { display: none; }
+
+  .toggle ~ .bridge,
+  .toggle ~ .children {
+    display: none;
+  }
+
+  .toggle:checked ~ .bridge {
+    display: block;
+  }
+  .toggle:checked ~ .children {
+    display: flex;
+  }
+
+  /* Expand indicator on clickable nodes */
+  label.node {
+    cursor: pointer;
+    user-select: none;
+  }
+  label.node::after {
+    content: '›';
+    font-size: 1.3em;
+    color: var(--node-border);
+    display: inline-block;
+    transition: transform 0.25s ease;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+  .toggle:checked + label.node::after {
+    transform: rotate(90deg);
+  }
+
+  /* ===== MASTER OVERRIDE ===== */
+  #master:checked ~ .tree .toggle ~ .bridge {
+    display: block !important;
+  }
+  #master:checked ~ .tree .toggle ~ .children {
+    display: flex !important;
+  }
+  #master:checked ~ .tree .toggle + label.node::after {
+    transform: rotate(90deg);
   }
 
   /* ===== COUNTER ANIMATION ===== */
@@ -166,13 +238,11 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Staggered delays by depth */
   .children .counter { animation-delay: 0s; }
   .children .children .counter { animation-delay: 0.1s; }
   .children .children .children .counter { animation-delay: 0.2s; }
   .children .children .children .children .counter { animation-delay: 0.3s; }
 
-  /* Keyframes for each unique number */
   @keyframes c55     { to { --n: 55; } }
   @keyframes c67     { to { --n: 67; } }
   @keyframes c191    { to { --n: 191; } }
@@ -218,7 +288,6 @@
   .children .children .children .node { font-size: clamp(11px, 1.2vh, 14px); }
   .children .children .children .children .node { font-size: clamp(10.5px, 1.15vh, 13.5px); }
 
-  /* Level alignment: same-depth nodes get equal width so columns line up */
   .children .children > .branch > .node { min-width: 200px; }
   .children .children .children > .branch > .node { min-width: 295px; }
   .children .children .children .children > .branch > .node { min-width: 305px; }
@@ -226,26 +295,36 @@
 </head>
 <body>
 
-<h1>Şekil 3. <span>Okul Sınıflandırması</span></h1>
+<!-- Master toggle must be a sibling of .tree for ~ selector -->
+<input type="checkbox" id="master" class="master-toggle">
+
+<div class="top-bar">
+  <h1>Şekil 3. <span>Okul Sınıflandırması</span></h1>
+  <label for="master" class="master-btn">
+    <span class="t-open">Tümünü Aç</span>
+    <span class="t-close">Tümünü Kapat</span>
+  </label>
+</div>
 
 <div class="tree">
   <div class="branch">
-    <!-- ROOT -->
+    <!-- ROOT: always open -->
     <div class="node root-node">Okul Sayıları</div>
     <div class="bridge"></div>
 
-    <!-- LEVEL 1: 3 Ana Dal -->
     <div class="children">
 
       <!-- ══════ DAL 1: Eğitim Kademesine Göre ══════ -->
       <div class="branch">
-        <div class="node l1">Eğitim Kademesine Göre Okul<span class="counter v63655"></span></div>
+        <input type="checkbox" id="t1" class="toggle">
+        <label for="t1" class="node l1">Eğitim Kademesine Göre Okul<span class="counter v63655"></span></label>
         <div class="bridge"></div>
         <div class="children">
 
           <!-- Okul Öncesi -->
           <div class="branch">
-            <div class="node">Okul Öncesi<span class="counter v8888"></span></div>
+            <input type="checkbox" id="t2" class="toggle">
+            <label for="t2" class="node">Okul Öncesi<span class="counter v8888"></span></label>
             <div class="bridge"></div>
             <div class="children">
               <div class="branch"><div class="node">Anaokulu<span class="counter v8888"></span></div></div>
@@ -256,13 +335,15 @@
 
           <!-- İlköğretim -->
           <div class="branch">
-            <div class="node">İlköğretim<span class="counter v42715"></span></div>
+            <input type="checkbox" id="t3" class="toggle">
+            <label for="t3" class="node">İlköğretim<span class="counter v42715"></span></label>
             <div class="bridge"></div>
             <div class="children">
 
               <!-- İlkokul -->
               <div class="branch">
-                <div class="node">İlkokul<span class="counter v24864"></span></div>
+                <input type="checkbox" id="t4" class="toggle">
+                <label for="t4" class="node">İlkokul<span class="counter v24864"></span></label>
                 <div class="bridge"></div>
                 <div class="children">
                   <div class="branch"><div class="node">Genel Eğitim Veren Ortaokullar<span class="counter v12682"></span></div></div>
@@ -271,7 +352,8 @@
 
               <!-- Ortaokul -->
               <div class="branch">
-                <div class="node">Ortaokul<span class="counter v17869"></span></div>
+                <input type="checkbox" id="t5" class="toggle">
+                <label for="t5" class="node">Ortaokul<span class="counter v17869"></span></label>
                 <div class="bridge"></div>
                 <div class="children">
                   <div class="branch"><div class="node">Meslek Ortaokulları<span class="counter v3390"></span></div></div>
@@ -283,13 +365,15 @@
 
           <!-- Ortaöğretim -->
           <div class="branch">
-            <div class="node">Ortaöğretim<span class="counter v12052"></span></div>
+            <input type="checkbox" id="t6" class="toggle">
+            <label for="t6" class="node">Ortaöğretim<span class="counter v12052"></span></label>
             <div class="bridge"></div>
             <div class="children">
 
               <!-- Genel Ortaöğretim -->
               <div class="branch">
-                <div class="node">Genel Ortaöğretim<span class="counter v12122"></span></div>
+                <input type="checkbox" id="t7" class="toggle">
+                <label for="t7" class="node">Genel Ortaöğretim<span class="counter v12122"></span></label>
                 <div class="bridge"></div>
                 <div class="children">
                   <div class="branch"><div class="node">İmam Hatip Ortaokulları<span class="counter v2412"></span></div></div>
@@ -306,7 +390,8 @@
 
       <!-- ══════ DAL 2: Resmî-Özel Ayrımında ══════ -->
       <div class="branch">
-        <div class="node l1">Resmî-Özel Ayrımında Okul<span class="counter v97457"></span></div>
+        <input type="checkbox" id="t8" class="toggle">
+        <label for="t8" class="node l1">Resmî-Özel Ayrımında Okul<span class="counter v97457"></span></label>
         <div class="bridge"></div>
         <div class="children">
 
@@ -314,7 +399,8 @@
 
           <!-- Özel Okullar -->
           <div class="branch">
-            <div class="node">Özel Okullar<span class="counter v36265"></span></div>
+            <input type="checkbox" id="t9" class="toggle">
+            <label for="t9" class="node">Özel Okullar<span class="counter v36265"></span></label>
             <div class="bridge"></div>
             <div class="children">
               <div class="branch"><div class="node">Özel Türk Okulları<span class="counter v97457"></span></div></div>
@@ -329,7 +415,8 @@
 
       <!-- ══════ DAL 3: Yurt Dışındaki Türk Okulları ══════ -->
       <div class="branch">
-        <div class="node l1">Yurt Dışındaki Türk Okulları<span class="counter v67"></span></div>
+        <input type="checkbox" id="t10" class="toggle">
+        <label for="t10" class="node l1">Yurt Dışındaki Türk Okulları<span class="counter v67"></span></label>
         <div class="bridge"></div>
         <div class="children">
           <div class="branch"><div class="node">Türk Okulları<span class="counter v67"></span></div></div>
